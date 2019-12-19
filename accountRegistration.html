@@ -1,0 +1,118 @@
+ <!DOCTYPE html>
+<html>
+	<head>
+		<title>VueJs Introduction</title>
+		<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+		<style>
+			@import url("https://fonts.googleapis.com/css?family=Carrois+Gothic");
+			
+			:root{
+				--green:#20C20E;
+			}
+			body {
+				background-color:black;
+				font: normal 12px/14px "Carrois Gothic", sans-serif;;
+				color:var(--green);
+			}
+			p,h1,h2 {
+				padding-top:5px;
+				text-align:center;
+			}
+			
+			#form_container {
+				width:400px;
+				height:400px;
+				background-color:black;
+				border-radius:20px;
+				border:2px solid var(--green);
+				text-align:center;
+			}
+			
+			label{
+				display:block;
+				padding:10px;
+			}
+			input{
+				font: normal 12px/14px "Carrois Gothic", sans-serif;;
+				width:200px;
+				height:20px;
+				text-align:center;
+				border-radius:5px;
+				background-color:black;
+				color:var(--green);
+				border:2px solid var(--green);
+			}
+			button{
+				margin:0px;
+				
+				width:150px;
+				height:20px;
+				background-color:black;
+				text-align:center;
+				border-radius:5px;
+				border:2px solid var(--green);
+				color:var(--green);
+				text-align:center;
+			}
+		</style>
+	</head>
+
+<body>
+
+	<div id="form_container">
+	
+		<h1>R3G1$TR4T10N</h1>
+		
+		
+		<label for="name">|_|$3rN4M3</label>
+		<input
+			id="name"
+			v-model="name"
+			type="text"
+			name="name"
+		>
+		<label for="email">E-M41L</label>
+		<input
+			id="email"
+			v-model="email"
+			type="text"
+			name="email"
+		>
+		<label for="email">pwd</label>
+		<input
+			id="pwd"
+			v-model="pwd"
+			type="password"
+			name="pwd"
+		>
+		
+		<div style="display:block; margin-top:20px;">
+			<button
+				id="submitButton"
+				v-model="submitButton"
+				name="submitButton"
+			>
+				Submit
+			</button>
+		</div>
+		
+	</div>
+	  
+      <script type = "text/javascript">
+         var app = new Vue({
+            el: '#form_container',
+            data: {
+				errors:[],
+				name: '',
+				email: '',
+				pwd: ''
+            },
+			methods:{
+				myfunc: function(){
+					return "Test"
+				}
+			}
+         });
+      </script>
+   </body>
+</html> 
