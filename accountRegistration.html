@@ -1,7 +1,7 @@
  <!DOCTYPE html>
 <html>
 	<head>
-		<title>VueJs Introduction</title>
+		<title>Validation</title>
 		<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
 		<style>
 			@import url("https://fonts.googleapis.com/css?family=Carrois+Gothic");
@@ -19,13 +19,25 @@
 				text-align:center;
 			}
 			
+			ul, li{
+				margin-top:10px;
+				padding:0px;
+				list-style: none
+			}
+			
+			
 			#form_container {
+				
+				position: absolute;
+				top: 0; 
+			
 				width:400px;
 				height:400px;
 				background-color:black;
 				border-radius:20px;
 				border:2px solid var(--green);
 				text-align:center;
+				display:inline-block;
 			}
 			
 			label{
@@ -42,9 +54,8 @@
 				color:var(--green);
 				border:2px solid var(--green);
 			}
-			button{
-				margin:0px;
-				
+			button {
+				margin:0px;	
 				width:150px;
 				height:20px;
 				background-color:black;
@@ -54,65 +65,188 @@
 				color:var(--green);
 				text-align:center;
 			}
+			.errorMsg{
+				color:red;	
+			}
+			
+			#errorWindow{
+				width:300px;
+				height:300px;
+				
+				display:inline-block;
+			}
+			
+			.errorInput{
+				border:2px solid #ff0000 !important;
+				color: #ff0000;
+			}
+			
+			.errorInput input{
+				border:2px solid #ff0000 !important;
+				color:red;
+			}
+			
+			canvas {display: block;}
+		
 		</style>
 	</head>
 
-<body>
+	<body>
 
-	<div id="form_container">
-	
-		<h1>R3G1$TR4T10N</h1>
+		<div id="form_container" v-bind:class ="{errorInput: errorInForm}">
 		
-		
-		<label for="name">|_|$3rN4M3</label>
-		<input
-			id="name"
-			v-model="name"
-			type="text"
-			name="name"
-		>
-		<label for="email">E-M41L</label>
-		<input
-			id="email"
-			v-model="email"
-			type="text"
-			name="email"
-		>
-		<label for="email">pwd</label>
-		<input
-			id="pwd"
-			v-model="pwd"
-			type="password"
-			name="pwd"
-		>
-		
-		<div style="display:block; margin-top:20px;">
-			<button
-				id="submitButton"
-				v-model="submitButton"
-				name="submitButton"
+			<h1>R3G1$TR4T10N</h1>
+			
+			<form 
+				@submit="checkForm"
+				method="post"
+				novalidate="true"
 			>
-				Submit
-			</button>
+			
+				<label for="name">|_|$3rN4M3</label>
+				<input
+					id="name"
+					v-model="name"
+					type="text"
+					name="name"
+				>
+				
+				
+				<label for="email">E-M41L</label>
+				<input
+					id="email"
+					v-model="email"
+					type="text"
+					name="email"
+				>
+				
+				
+				<label for="email">pwd</label>
+				<input
+					id="pwd"
+					v-model="pwd"
+					type="password"
+					name="pwd"
+				>
+				
+				
+				<div style="display:block; margin-top:20px;">
+				
+						<input
+						  type="submit"
+						  value="Submit"
+						>
+					
+				</div>
+				
+				<ul>
+					<li v-for="error in errors" class="errorMsg">{{error}}</li>
+				</ul>
+				
+			</form>
 		</div>
 		
-	</div>
+		<canvas id="canvasBackground"></canvas>
 	  
-      <script type = "text/javascript">
-         var app = new Vue({
-            el: '#form_container',
-            data: {
-				errors:[],
-				name: '',
-				email: '',
-				pwd: ''
-            },
-			methods:{
-				myfunc: function(){
-					return "Test"
+		<script type = "text/javascript">
+			
+			let canvas = document.getElementById("canvasBackground");
+			let ctx = canvas.getContext("2d");
+			
+			canvas.height = window.innerHeight-20;
+			canvas.width = window.innerWidth-10;
+			
+			let chars = "01"
+			chars = chars.split("");
+
+			let font_size = 13;
+			let columns = canvas.width/font_size;
+			let drops = [];
+			
+			for(var x = 0; x < columns; x++)
+				drops[x] = 1; 
+
+			function draw(validationError)
+			{
+			
+				if(validationError){
+					ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+					ctx.fillRect(0, 0, canvas.width, canvas.height);
+					
+					ctx.fillStyle = "#ff0000"; // red
+					ctx.font = font_size + "px arial";
+				}
+				else{
+					ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+					ctx.fillRect(0, 0, canvas.width, canvas.height);
+					
+					ctx.fillStyle = "#20C20E";
+					ctx.font = font_size + "px arial";
+				}
+				
+				
+				for(var i = 0; i < drops.length; i++)
+				{
+					
+					var text = chars[Math.floor(Math.random()*chars.length)];
+					
+					ctx.fillText(text, i*font_size, drops[i]*font_size);
+					
+					if(drops[i]*font_size > canvas.height && Math.random() > 0.975)
+						drops[i] = 0;
+
+					drops[i]++;
 				}
 			}
-         });
+			
+			var matrix = setInterval(draw, 30, false);
+			
+			var app = new Vue({
+				el: '#form_container',
+				data: {
+				
+					errorInForm:  false,
+					errors:[],
+					name: "",
+					email: "",
+					pwd: ""
+				},
+				methods:{
+					checkForm: function(e){
+						
+						this.errors = [];
+						
+						if(!this.name.match(/^[A-Za-z0-9]+(?:[ _-][A-Za-z0-9]+)*$/)){
+							this.errors.push('Username is not valid')
+						}
+						
+						if(!this.email.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)){
+							this.errors.push('Email is not valid')
+						}
+						
+						if(!(this.pwd.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/))){
+							this.errors.push('Password is not valid')
+						}
+						
+						if(!this.errors.length) {
+							return true;
+						}
+						else{
+							this.errorFunc()
+						}
+						
+						e.preventDefault();
+					},
+					errorFunc: function(){
+						this.errorInForm = true
+						clearInterval(matrix)
+						ctx.clearRect(0, 0, canvas.width, canvas.height)
+						matrix = setInterval(draw, 30, true)
+					}
+				}
+			});
+			
+			
       </script>
    </body>
 </html> 
